@@ -7,7 +7,7 @@
 # GNU Radio Python Flow Graph
 # Title: OOK-APCMA Transmitter
 # Author: Atsushi.N
-# GNU Radio version: 3.8.3.1
+# GNU Radio version: 3.8.4.0
 
 from distutils.version import StrictVersion
 
@@ -25,6 +25,7 @@ from PyQt5 import Qt
 from gnuradio import qtgui
 from gnuradio.filter import firdes
 import sip
+from gnuradio import blocks
 from gnuradio import gr
 import sys
 import signal
@@ -72,8 +73,8 @@ class OOK_APCMA_TX(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.slot_width = slot_width = 400
+        self.slot_per_buffer = slot_per_buffer = 10
         self.samp_rate = samp_rate = 32000
-        self.pulse_width = pulse_width = 400
         self.interval_slot = interval_slot = 50
         self.bits_per_symbol = bits_per_symbol = 2
 
@@ -130,13 +131,19 @@ class OOK_APCMA_TX(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_1_win = sip.wrapinstance(self.qtgui_time_sink_x_1.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_1_win)
-        self.epy_block_0 = epy_block_0.blk(B=bits_per_symbol, pulse_width=pulse_width, slot_width=slot_width, interval_slot=interval_slot)
+        self.epy_block_0 = epy_block_0.blk(B=bits_per_symbol, slot_width=slot_width, interval_slot=interval_slot, slot_per_buffer=slot_per_buffer)
+        self.blocks_wavfile_sink_0 = blocks.wavfile_sink('/home/atsushi-n/Desktop/data.wav', 1, samp_rate, 8)
+        self.blocks_throttle_0 = blocks.throttle(gr.sizeof_gr_complex*1, samp_rate,True)
+        self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.epy_block_0, 0), (self.qtgui_time_sink_x_1, 0))
+        self.connect((self.blocks_complex_to_float_0, 0), (self.blocks_wavfile_sink_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.blocks_complex_to_float_0, 0))
+        self.connect((self.blocks_throttle_0, 0), (self.qtgui_time_sink_x_1, 0))
+        self.connect((self.epy_block_0, 0), (self.blocks_throttle_0, 0))
 
 
     def closeEvent(self, event):
@@ -151,19 +158,20 @@ class OOK_APCMA_TX(gr.top_block, Qt.QWidget):
         self.slot_width = slot_width
         self.epy_block_0.slot_width = self.slot_width
 
+    def get_slot_per_buffer(self):
+        return self.slot_per_buffer
+
+    def set_slot_per_buffer(self, slot_per_buffer):
+        self.slot_per_buffer = slot_per_buffer
+        self.epy_block_0.slot_per_buffer = self.slot_per_buffer
+
     def get_samp_rate(self):
         return self.samp_rate
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
+        self.blocks_throttle_0.set_sample_rate(self.samp_rate)
         self.qtgui_time_sink_x_1.set_samp_rate(self.samp_rate)
-
-    def get_pulse_width(self):
-        return self.pulse_width
-
-    def set_pulse_width(self, pulse_width):
-        self.pulse_width = pulse_width
-        self.epy_block_0.pulse_width = self.pulse_width
 
     def get_interval_slot(self):
         return self.interval_slot
