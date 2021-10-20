@@ -20,8 +20,10 @@ class blk(gr.sync_block):
         self.slot_per_buffer = slot_per_buffer
         self.slot_per_symbol = 2 ** (1 + self.B) + 5 + self.interval_slot
         
-        self.nslot = self.slot_per_symbol  # タイムスロットの番号、1:2**self.fs +5
+        self.nslot = 0  # タイムスロットの番号、1:2**self.fs +5
         self.l = 0
+
+        self.init_symbol()
         
         
 
@@ -40,38 +42,38 @@ class blk(gr.sync_block):
         # 送信した値varを保存
         # with open('send_data.csv', 'a') as f:
         #     print(var, file=f)
+        print(var)
         return var
         
         
     def init_symbol(self):
-	    var = self.decide_var("loop", 1, 8)
+	    var = self.decide_var("loop", 1, 4)
 	    self.slot_ook = [0] * self.slot_per_symbol
 	    on = [0, var+1, 2 ** (1 + self.B) + 3 - var, 2 ** (1 + self.B) + 4]
 	    for i in on:
 		    self.slot_ook[i] = 1
-	    self.nslot = 0
-	    print(self.slot_ook)
 
 
     def work(self, input_items, output_items):
-        print(self.nslot)
-        # 1シンボルを送信したあとの処理
-        if self.nslot == self.slot_per_symbol:
-            self.init_symbol()
-        
         if self.slot_per_buffer > self.slot_per_symbol - self.nslot:
-            slot_per_buffer = self.slot_per_symbol - self.nslot
+            send_slot = self.slot_ook[self.nslot:]
+            self.init_symbol()
+            send_slot.extend(self.slot_ook[:self.slot_per_buffer-self.slot_per_symbol+self.nslot])
+        elif self.nslot == 0:
+            self.init_symbol()
+            send_slot = self.slot_ook[:self.slot_per_buffer]
         else:
-            slot_per_buffer = self.slot_per_buffer
-            
-        if len(output_items[0]) >= self.slot_width * slot_per_buffer:
-            output_items[0][:self.slot_width * slot_per_buffer] = np.repeat(self.slot_ook[self.nslot:self.nslot+slot_per_buffer], self.slot_width)
-            
+            send_slot = self.slot_ook[self.nslot:self.nslot + self.slot_per_buffer]
+
+        # print(send_slot)
+        if len(output_items[0]) >= self.slot_width * self.slot_per_buffer:
+            output_items[0][:self.slot_width * self.slot_per_buffer] = np.repeat(send_slot, self.slot_width)
+            print(send_slot)
 
             # flagを進める
-            self.nslot = self.nslot + slot_per_buffer
+            self.nslot = (self.nslot + self.slot_per_buffer) % self.slot_per_symbol
 
-            return self.slot_width * slot_per_buffer
+            return self.slot_width * self.slot_per_buffer
         else:
             return 0
 
