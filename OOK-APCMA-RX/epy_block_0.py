@@ -17,4 +17,7 @@ class signal_detection(gr.decim_block):
     def work(self, input_items, output_items):
         tmp = [(abs(input_items[0][i]) > 0.1) or (abs(input_items[1][i]) > 0.1) for i in range(len(input_items[0]))]
         output_items[0][:] = [sum(tmp[i * self.decim:(i + 1) * self.decim]) > self.decim * 0.5 for i in range(len(output_items[0][:]))]
+        # print(output_items[0][:])
+        # with open('C:\\Users\\Atsushi.N\\Desktop\\data.csv', 'a') as f:
+        #     f.write(output_items)
         return len(output_items[0][:])
