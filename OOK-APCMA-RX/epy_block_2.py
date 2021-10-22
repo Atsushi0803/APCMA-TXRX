@@ -29,7 +29,5 @@ class APCMA_Decode(gr.sync_block):
             for j in range(len(self.ApcmaCode)):
                 if np.all(np.logical_and(self.ApcmaCode[j][:],self.PulseList)==self.ApcmaCode[j][:]):
                     print("Word:{}".format(j+1))
-                    print(self.PulseList)
-        # output_items[0][:] = input_items[0][:]
-        # return len(output_items[0][:])
+                    # print(self.PulseList)
         return 0
