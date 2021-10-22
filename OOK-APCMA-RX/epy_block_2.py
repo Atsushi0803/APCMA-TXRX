@@ -9,7 +9,7 @@ class APCMA_Decode(gr.sync_block):
             self,
             name='Decoding APCMA',
             in_sig=[np.float32],
-            out_sig=[np.float32]
+            out_sig=None
         )
 
         self.B = B # [bits/symbol]
@@ -26,9 +26,10 @@ class APCMA_Decode(gr.sync_block):
     def work(self, input_items, output_items):
         for i in range(len(input_items[0][:])):
             self.PulseList = np.append(self.PulseList[1:], input_items[0][i])
-            print(self.PulseList)
             for j in range(len(self.ApcmaCode)):
-                if np.all(self.PulseList == self.ApcmaCode[j]):
+                if np.all(np.logical_and(self.ApcmaCode[j][:],self.PulseList)==self.ApcmaCode[j][:]):
                     print("Word:{}".format(j+1))
-        output_items[0][:] = input_items[0][:]
-        return len(output_items[0][:])
+                    print(self.PulseList)
+        # output_items[0][:] = input_items[0][:]
+        # return len(output_items[0][:])
+        return 0
