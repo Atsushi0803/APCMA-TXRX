@@ -13,5 +13,5 @@ class pulse_detection(gr.decim_block):
         self.set_relative_rate(1.0/self.decim)
 
     def work(self, input_items, output_items):
-        output_items[0][:] = [sum(input_items[0][j+self.decim*i] > 0.5 for j in range(self.decim)) >= 3 for i in range(len(output_items[0][:]))]
+        output_items[0][:] = [sum(input_items[0][j+self.decim*i] > 0.5 for j in range(self.decim)) > 0.5 * self.decim for i in range(len(output_items[0][:]))]
         return len(output_items[0][:])
