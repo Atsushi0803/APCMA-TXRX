@@ -8,7 +8,7 @@ class APCMA_Decode(gr.sync_block):
             self,
             name='Decoding APCMA',
             in_sig=[np.float32],
-            out_sig=[np.float32]
+            out_sig=None
         )
 
         # 復号するために参照するパルス列の作成
@@ -28,7 +28,6 @@ class APCMA_Decode(gr.sync_block):
             self.PulseList = np.append(self.PulseList[1:], input_items[0][i])
             print(self.PulseList)
             for j in range(len(self.ApcmaCode)):
-                if np.all(self.PulseList == self.ApcmaCode[j]):
-                    print(f'Word:{j}')
-        output_items[0][:] = input_items[0][:]
-        return len(output_items[0][:])
+                if np.all(np.logical_and(self.PulseList, self.ApcmaCode[j]) == self.ApcmaCode[j]):
+                    print(f'Word:{j+1}')
+        return 0
