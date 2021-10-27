@@ -140,7 +140,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>100</value>
+      <value>128</value>
     </param>
   </block>
   <block>
@@ -167,7 +167,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>5</value>
+      <value>8</value>
     </param>
   </block>
   <block>
@@ -194,7 +194,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0.1</value>
+      <value>0.2</value>
     </param>
   </block>
   <block>
@@ -221,7 +221,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>200000</value>
+      <value>250000</value>
     </param>
   </block>
   <block>
@@ -296,11 +296,8 @@ class signal_detection(gr.decim_block):
         self.threshhold = threshhold
 
     def work(self, input_items, output_items):
-        tmp = [(abs(input_items[0][i]) &gt; 0.1) or (abs(input_items[1][i]) &gt; 0.1) for i in range(len(input_items[0]))]
+        tmp = [((abs(input_items[0][i]) &gt; self.threshhold) or (abs(input_items[1][i]) &gt; self.threshhold)) for i in range(len(input_items[0]))]
         output_items[0][:] = [sum(tmp[i * self.decim:(i + 1) * self.decim]) &gt; self.decim * 0.5 for i in range(len(output_items[0][:]))]
-        # print(output_items[0][:])
-        # with open('C:\\Users\\Atsushi.N\\Desktop\\data.csv', 'a') as f:
-        #     f.write(output_items)
         return len(output_items[0][:])
 </value>
     </param>
@@ -314,7 +311,7 @@ class signal_detection(gr.decim_block):
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(352, 252)</value>
+      <value>(376, 252)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -359,12 +356,12 @@ class pulse_detection(gr.decim_block):
             name='Pulse Detection',
             in_sig=[np.float32],
             out_sig=[np.float32],
-            decim = 5)
+            decim = Sub_slot_rate)
         self.decim = Sub_slot_rate
-        self.set_relative_rate(1.0/self.decim)
+        self.set_relative_rate(1.0/Sub_slot_rate)
 
     def work(self, input_items, output_items):
-        output_items[0][:] = [sum(input_items[0][j+self.decim*i] &gt; 0.5 for j in range(self.decim)) &gt;= 3 for i in range(len(output_items[0][:]))]
+        output_items[0][:] = [sum(input_items[0][self.decim * i : self.decim * (i + 1)]) &gt; self.decim * 0.5 for i in range(len(output_items[0][:]))]
         return len(output_items[0][:])
 </value>
     </param>
@@ -437,10 +434,11 @@ class APCMA_Decode(gr.sync_block):
     def work(self, input_items, output_items):
         for i in range(len(input_items[0][:])):
             self.PulseList = np.append(self.PulseList[1:], input_items[0][i])
+            # print(self.PulseList)
             for j in range(len(self.ApcmaCode)):
                 if np.all(np.logical_and(self.ApcmaCode[j][:],self.PulseList)==self.ApcmaCode[j][:]):
                     print("Word:{}".format(j+1))
-                    print(self.PulseList)
+                    # print(self.PulseList)
         # output_items[0][:] = input_items[0][:]
         # return len(output_items[0][:])
         return 0

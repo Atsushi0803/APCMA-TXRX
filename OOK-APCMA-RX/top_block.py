@@ -27,10 +27,10 @@ class top_block(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 200000
-        self.Threshhold = Threshhold = 0.1
-        self.Sub_Slot_Rate = Sub_Slot_Rate = 5
-        self.Slot_Length = Slot_Length = 100
+        self.samp_rate = samp_rate = 250000
+        self.Threshhold = Threshhold = 0.2
+        self.Sub_Slot_Rate = Sub_Slot_Rate = 8
+        self.Slot_Length = Slot_Length = 128
         self.Bits_Per_Symbol = Bits_Per_Symbol = 4
 
         ##################################################
