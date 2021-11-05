@@ -2,9 +2,10 @@ import numpy as np
 from gnuradio import gr
 
 
-class pulse_detection(gr.decim_block):
+class PulseDetection(gr.decim_block):
     def __init__(self, Sub_slot_rate=5):
-        gr.decim_block.__init__(self,
+        gr.decim_block.__init__(
+            self,
             name='Pulse Detection',
             in_sig=[np.float32],
             out_sig=[np.float32],
