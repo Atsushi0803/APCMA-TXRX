@@ -46,7 +46,7 @@ class OOK_APCMA_RX(gr.top_block):
             uhd.stream_args(
                 cpu_format="fc32",
                 args='',
-                channels=list(range(0,1)),
+                channels=list(range(0, 1)),
             ),
         )
         self.uhd_usrp_source_0.set_center_freq(924000000, 0)
