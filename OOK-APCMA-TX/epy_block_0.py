@@ -17,7 +17,7 @@ class ApcmaTransmitter(gr.sync_block):
         self.bits_per_symbol = bits_per_symbol  # [bits/symbol]
         self.slot_width = slot_width  # [sample]
         self.interval_slot = interval_slot  # シンボル間隔のスロット数 [slot]
-        self.slot_per_symbol = 2 ** (1 + self.bits_per_symbol) + 5 + self.interval_slot
+        self.slot_per_symbol = 2 ** (1 + self.bits_per_symbol) + 5
 
         self.nth_slot = 0  # タイムスロットの番号
         self.nth_var = 0  # varをループにするときのindex
@@ -46,7 +46,7 @@ class ApcmaTransmitter(gr.sync_block):
     def init_symbol(self):
         self.nth_slot = 0
         var = self.decide_var("loop", 1, 4)
-        self.slot_ook = [0] * self.slot_per_symbol
+        self.slot_ook = [0] * (self.slot_per_symbol + random.randint(self.interval_slot - 5, self.interval_slot + 5))
         on = [0, var + 1, self.slot_per_symbol - 2 - var, self.slot_per_symbol - 1]
         for i in on:
             self.slot_ook[i] = 1
