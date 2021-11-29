@@ -10,6 +10,7 @@
 # GNU Radio version: 3.8.3.1
 
 from gnuradio import blocks
+import pmt
 from gnuradio import gr
 from gnuradio.filter import firdes
 import sys
@@ -17,8 +18,6 @@ import signal
 from argparse import ArgumentParser
 from gnuradio.eng_arg import eng_float, intx
 from gnuradio import eng_notation
-from gnuradio import uhd
-import time
 import epy_block_0
 import epy_block_1
 import epy_block_2
@@ -41,34 +40,22 @@ class OOK_APCMA_RX(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.uhd_usrp_source_0 = uhd.usrp_source(
-            ",".join(("", "")),
-            uhd.stream_args(
-                cpu_format="fc32",
-                args='',
-                channels=list(range(0, 1)),
-            ),
-        )
-        self.uhd_usrp_source_0.set_center_freq(924000000, 0)
-        self.uhd_usrp_source_0.set_gain(10, 0)
-        self.uhd_usrp_source_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_source_0.set_bandwidth(200000, 0)
-        self.uhd_usrp_source_0.set_samp_rate(samp_rate)
-        self.uhd_usrp_source_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.epy_block_2 = epy_block_2.ApcmaDecode(bits_per_symbol=Bits_Per_Symbol)
         self.epy_block_1 = epy_block_1.PulseDetection(Sub_slot_rate=Sub_Slot_Rate)
         self.epy_block_0 = epy_block_0.SignalDetection(slot_length=Slot_Length, sub_slot_rate=Sub_Slot_Rate, threshold=Threshold)
+        self.blocks_file_source_0 = blocks.file_source(gr.sizeof_gr_complex*1, 'C:\\Users\\Atsushi.N\\Desktop\\wav_sink\\data1.wav', True, 0, 0)
+        self.blocks_file_source_0.set_begin_tag(pmt.PMT_NIL)
         self.blocks_complex_to_float_0 = blocks.complex_to_float(1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.blocks_complex_to_float_0, 1), (self.epy_block_0, 1))
         self.connect((self.blocks_complex_to_float_0, 0), (self.epy_block_0, 0))
+        self.connect((self.blocks_complex_to_float_0, 1), (self.epy_block_0, 1))
+        self.connect((self.blocks_file_source_0, 0), (self.blocks_complex_to_float_0, 0))
         self.connect((self.epy_block_0, 0), (self.epy_block_1, 0))
         self.connect((self.epy_block_1, 0), (self.epy_block_2, 0))
-        self.connect((self.uhd_usrp_source_0, 0), (self.blocks_complex_to_float_0, 0))
 
 
     def get_samp_rate(self):
@@ -76,7 +63,6 @@ class OOK_APCMA_RX(gr.top_block):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.uhd_usrp_source_0.set_samp_rate(self.samp_rate)
 
     def get_Threshold(self):
         return self.Threshold

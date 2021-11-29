@@ -105,7 +105,29 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [176, 232.0]
+    coordinate: [368, 232.0]
+    rotation: 0
+    state: true
+- name: blocks_file_source_0
+  id: blocks_file_source
+  parameters:
+    affinity: ''
+    alias: ''
+    begin_tag: pmt.PMT_NIL
+    comment: ''
+    file: C:\Users\Atsushi.N\Desktop\wav_sink\data1.wav
+    length: '0'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    offset: '0'
+    repeat: 'True'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [104, 376.0]
     rotation: 0
     state: true
 - name: epy_block_0
@@ -137,7 +159,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [384, 220.0]
+    coordinate: [544, 220.0]
     rotation: 0
     state: true
 - name: epy_block_1
@@ -164,7 +186,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [752, 236.0]
+    coordinate: [752, 240.0]
     rotation: 0
     state: enabled
 - name: epy_block_2
@@ -200,7 +222,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 236.0]
+    coordinate: [952, 240.0]
     rotation: 0
     state: true
 - name: uhd_usrp_source_0
@@ -572,13 +594,14 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [16, 312.0]
+    coordinate: [24, 172.0]
     rotation: 0
-    state: true
+    state: disabled
 
 connections:
 - [blocks_complex_to_float_0, '0', epy_block_0, '0']
 - [blocks_complex_to_float_0, '1', epy_block_0, '1']
+- [blocks_file_source_0, '0', blocks_complex_to_float_0, '0']
 - [epy_block_0, '0', epy_block_1, '0']
 - [epy_block_1, '0', epy_block_2, '0']
 - [uhd_usrp_source_0, '0', blocks_complex_to_float_0, '0']

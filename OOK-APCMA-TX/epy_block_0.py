@@ -49,7 +49,7 @@ class ApcmaTransmitter(gr.sync_block):
         self.slot_ook = [0] * (self.slot_per_symbol + random.randint(self.interval_slot - 5, self.interval_slot + 5))
         on = [0, var + 1, self.slot_per_symbol - 2 - var, self.slot_per_symbol - 1]
         for i in on:
-            self.slot_ook[i] = 1
+            self.slot_ook[i] = 0.9
 
     def work(self, input_items, output_items):
         if len(output_items[0]) > self.slot_width:
