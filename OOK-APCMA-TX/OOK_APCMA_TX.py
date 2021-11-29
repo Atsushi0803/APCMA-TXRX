@@ -46,10 +46,10 @@ class OOK_APCMA_TX(gr.top_block):
             ),
             '',
         )
-        self.uhd_usrp_sink_0.set_center_freq(924000000, 0)
+        self.uhd_usrp_sink_0.set_center_freq(920000000, 0)
         self.uhd_usrp_sink_0.set_gain(100, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
-        self.uhd_usrp_sink_0.set_bandwidth(100000, 0)
+        self.uhd_usrp_sink_0.set_bandwidth(200000, 0)
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_time_now(uhd.time_spec(time.time()), uhd.ALL_MBOARDS)
         self.epy_block_0 = epy_block_0.ApcmaTransmitter(bits_per_symbol=bits_per_symbol, slot_width=slot_width, interval_slot=interval_slot)
