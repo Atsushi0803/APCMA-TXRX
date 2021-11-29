@@ -59,7 +59,7 @@ class ApcmaTransmitter(gr.sync_block):
             self.nth_slot = self.nth_slot + 1
 
             # 1シンボルを送信したあとの処理
-            if self.nth_slot == self.slot_per_symbol:
+            if self.nth_slot == len(self.slot_ook):
                 self.init_symbol()
 
             return self.slot_width
