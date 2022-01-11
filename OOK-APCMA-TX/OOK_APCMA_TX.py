@@ -31,8 +31,8 @@ class OOK_APCMA_TX(gr.top_block):
         ##################################################
         self.slot_width = slot_width = 64
         self.samp_rate = samp_rate = 125000
-        self.interval_slot = interval_slot = 100
-        self.bits_per_symbol = bits_per_symbol = 4
+        self.interval_slot = interval_slot = 532
+        self.bits_per_symbol = bits_per_symbol = 6
         self.tx_gain = tx_gain = float(sys.argv[1])
 
         ##################################################
