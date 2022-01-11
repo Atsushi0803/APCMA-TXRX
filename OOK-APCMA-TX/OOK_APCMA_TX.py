@@ -33,6 +33,7 @@ class OOK_APCMA_TX(gr.top_block):
         self.samp_rate = samp_rate = 125000
         self.interval_slot = interval_slot = 100
         self.bits_per_symbol = bits_per_symbol = 4
+        self.tx_gain = tx_gain = float(sys.argv[1])
 
         ##################################################
         # Blocks
@@ -42,12 +43,12 @@ class OOK_APCMA_TX(gr.top_block):
             uhd.stream_args(
                 cpu_format="fc32",
                 args='',
-                channels=list(range(0,1)),
+                channels=list(range(0, 1)),
             ),
             '',
         )
         self.uhd_usrp_sink_0.set_center_freq(920000000, 0)
-        self.uhd_usrp_sink_0.set_gain(100, 0)
+        self.uhd_usrp_sink_0.set_gain(tx_gain, 0)
         self.uhd_usrp_sink_0.set_antenna('TX/RX', 0)
         self.uhd_usrp_sink_0.set_bandwidth(200000, 0)
         self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
