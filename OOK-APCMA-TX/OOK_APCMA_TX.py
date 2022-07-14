@@ -72,10 +72,11 @@ class OOK_APCMA_TX(gr.top_block, Qt.QWidget):
         # Variables
         ##################################################
         self.slot_width = slot_width = 400
-        self.samp_rate = samp_rate = 32000
-        self.pulse_width = pulse_width = 400
+        self.samp_rate = samp_rate = 250000
         self.interval_slot = interval_slot = 50
-        self.bits_per_symbol = bits_per_symbol = 2
+        self.bits_per_symbol = bits_per_symbol = 8
+        self.sf = sf = 7
+        self.number_of_pulse = number_of_pulse = 4
 
         ##################################################
         # Blocks
@@ -130,7 +131,7 @@ class OOK_APCMA_TX(gr.top_block, Qt.QWidget):
 
         self._qtgui_time_sink_x_1_win = sip.wrapinstance(self.qtgui_time_sink_x_1.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_time_sink_x_1_win)
-        self.epy_block_0 = epy_block_0.blk(B=bits_per_symbol, pulse_width=pulse_width, slot_width=slot_width, interval_slot=interval_slot)
+        self.epy_block_0 = epy_block_0.blk(B=bits_per_symbol, interval_slot=interval_slot, sf=sf, number_of_pulse=number_of_pulse)
 
 
         ##################################################

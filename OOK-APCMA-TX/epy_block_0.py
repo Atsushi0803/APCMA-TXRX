@@ -5,7 +5,7 @@ import random
 
 ############################### APCMA Transmitter ############################
 class ApcmaTransmitter(gr.sync_block):
-    def __init__(self, bits_per_symbol=2, slot_width=400, interval_slot=50):
+    def __init__(self, bits_per_symbol=8, interval_slot=100, sf=7, number_of_pulse=4):
         gr.sync_block.__init__(
             self,
             name='APCMA Modulation',
@@ -15,7 +15,8 @@ class ApcmaTransmitter(gr.sync_block):
 
         # 各パラメータの決定
         self.bits_per_symbol = bits_per_symbol  # [bits/symbol]
-        self.slot_width = slot_width  # [sample]
+        self.sf = sf
+        self.slot_width = slot_width = 2 ** sf  # [sample]
         self.interval_slot = interval_slot  # シンボル間隔のスロット数 [slot]
         self.slot_per_symbol = 2 ** (1 + self.bits_per_symbol) + 5 + self.interval_slot
 
@@ -24,6 +25,13 @@ class ApcmaTransmitter(gr.sync_block):
 
         self.slot_ook = [0] * self.slot_per_symbol  # slotのon-offを表すリスト
         self.init_symbol()  # 最初のシンボルを決定
+
+        n = np.arange(slot_width)
+        if sf != 0:
+            self.sample_on = np.exp(1j*2*np.pi*(n*n/2/slot_width-0.5*n))
+        else:
+            self.sample_on = np.ones(slot_width)
+
 
     def decide_var(self, pattern, start_var, end_var):
         if pattern == "random":
@@ -53,7 +61,7 @@ class ApcmaTransmitter(gr.sync_block):
 
     def work(self, input_items, output_items):
         if len(output_items[0]) > self.slot_width:
-            output_items[0][:self.slot_width] = np.repeat(self.slot_ook[self.nth_slot], self.slot_width)
+            output_items[0][:self.slot_width] = np.sample_on
 
             # flagを進める
             self.nth_slot = self.nth_slot + 1
