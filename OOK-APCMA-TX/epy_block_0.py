@@ -61,7 +61,10 @@ class ApcmaTransmitter(gr.sync_block):
 
     def work(self, input_items, output_items):
         if len(output_items[0]) > self.slot_width:
-            output_items[0][:self.slot_width] = np.sample_on
+            if self.slot_ook[self.nslot] == 1:
+                output_items[0][:self.slot_width] = self.sample_on
+            elif self.slot_ook[self.nslot] == 0:
+                output_items[0][:self.slot_width] = np.zeros(self.slot_width)
 
             # flagを進める
             self.nth_slot = self.nth_slot + 1
